@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "quecee",
+  "version": "${version}",
+  "name": "Quecee",
+  "description": "",
+  "authors": [
+    "TheoreticallyUseful / P03W"
+  ],
+  "contact": {
+    "sources": "",
+    "issues": ""
+  },
+  "license": "Mozilla",
+  "icon": "assets/QueCee/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      {
+        "value": "org.github.p03w.quecee.QueCeeMain::INSTANCE"
+      }
+    ]
+  },
+  "mixins": [
+    "quecee.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.7.1",
+    "fabric": "*",
+    "fabric-language-kotlin": ">=1.5.0+kotlin.1.4.31",
+    "minecraft": "^1.16.5"
+  }
+}
