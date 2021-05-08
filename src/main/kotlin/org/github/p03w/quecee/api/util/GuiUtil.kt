@@ -13,17 +13,25 @@ import net.minecraft.nbt.IntArrayTag
 import net.minecraft.nbt.ListTag
 import net.minecraft.nbt.StringTag
 import net.minecraft.text.LiteralText
+import net.minecraft.text.MutableText
 import net.minecraft.text.Style
+import net.minecraft.text.Text
 import net.minecraft.util.Formatting
 
 /**
  * Converts an ItemConvertible into an ItemStack with a custom name and a tag that makes it get cleaned up from creative
  */
 fun ItemConvertible.guiStack(name: String = "", nameColor: Formatting = Formatting.WHITE): ItemStack {
+    return this.guiStack(LiteralText(name), nameColor)
+}
+
+/**
+ * Converts an ItemConvertible into an ItemStack with a custom name and a tag that makes it get cleaned up from creative
+ */
+fun ItemConvertible.guiStack(name: MutableText = LiteralText(""), nameColor: Formatting = Formatting.WHITE): ItemStack {
     return ItemStack(this)
         .setCustomName(
-            LiteralText(name)
-                .setStyle(
+            name.setStyle(
                     Style.EMPTY
                         .withItalic(false)
                         .withFormatting(nameColor)
