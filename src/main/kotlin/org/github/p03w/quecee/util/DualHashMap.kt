@@ -46,4 +46,11 @@ class DualHashMap<KEY, TYPE_A, TYPE_B> {
             receiver(key, entry.first, entry.second)
         }
     }
+
+    override fun toString(): String {
+        return "DualHashMap(" +
+                "\n\tbackingA=$backingA" +
+                "\n\t backingB=$backingB" +
+                ")"
+    }
 }

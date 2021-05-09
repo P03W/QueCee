@@ -18,17 +18,27 @@ abstract class QueCeeHandlerFactory<T>(
     val onCloseMethod: (T) -> Unit
 ) : NamedScreenHandlerFactory {
     private lateinit var defaulted: SimpleDefaultedInventory
+    private lateinit var lastMade: QueCeeScreenHandler<T, *>
 
-    override fun createMenu(syncId: Int, inv: PlayerInventory, player: PlayerEntity): QueCeeScreenHandler<T, GenericContainerScreenHandler> {
+    override fun createMenu(
+        syncId: Int,
+        inv: PlayerInventory,
+        player: PlayerEntity
+    ): QueCeeScreenHandler<T, GenericContainerScreenHandler> {
         defaulted = SimpleDefaultedInventory(rowCount * 9, Items.LIGHT_GRAY_STAINED_GLASS_PANE.guiStack(""))
         val actionMap = generateActionMap(state)
         actionMap.copyIntoInventory(defaulted)
-        return QueCeeScreenHandler(syncId, inv, defaulted, rowCount, rowsToType(rowCount), actionMap, state, onCloseMethod)
+
+        lastMade =
+            QueCeeScreenHandler(syncId, inv, defaulted, rowCount, rowsToType(rowCount), actionMap, state, onCloseMethod)
+        return lastMade as QueCeeScreenHandler<T, GenericContainerScreenHandler>
     }
 
     fun rebuild() {
         val actionMap = generateActionMap(state)
+        defaulted.reset()
         actionMap.copyIntoInventory(defaulted)
+        lastMade.actions = actionMap
     }
 
     override fun getDisplayName(): Text {
@@ -38,7 +48,7 @@ abstract class QueCeeHandlerFactory<T>(
     abstract fun generateActionMap(state: T): ItemActionMap<T>
 
     private fun rowsToType(rowCount: Int): ScreenHandlerType<GenericContainerScreenHandler> {
-        return when(rowCount) {
+        return when (rowCount) {
             1 -> ScreenHandlerType.GENERIC_9X1
             2 -> ScreenHandlerType.GENERIC_9X2
             3 -> ScreenHandlerType.GENERIC_9X3

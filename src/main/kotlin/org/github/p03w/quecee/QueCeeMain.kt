@@ -4,7 +4,7 @@ import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.minecraft.server.network.ServerPlayerEntity
 
-object QueCeeMain : ModInitializer{
+object QueCeeMain : ModInitializer {
     override fun onInitialize() {
         ServerTickEvents.START_WORLD_TICK.register {
             it.players.forEach(::stripPlayerOfGuiItems)
