@@ -8,12 +8,21 @@ package org.github.p03w.quecee.api.gui.inventory
 
 import net.minecraft.inventory.SimpleInventory
 import net.minecraft.item.ItemStack
+import org.github.p03w.quecee.api.gui.QueCeeScreenHandler
 
 /**
  * A simple inventory that fills all slots with the provided ItemStack
  */
-class SimpleDefaultedInventory(size: Int, default: ItemStack) : SimpleInventory(size) {
+class SimpleDefaultedInventory(val size: Int, val default: ItemStack) : SimpleInventory(size) {
+    var containingHandler: QueCeeScreenHandler<*, *>? = null
+
     init {
+        for (slot in 0 until size) {
+            setStack(slot, default)
+        }
+    }
+
+    fun reset() {
         for (slot in 0 until size) {
             setStack(slot, default)
         }

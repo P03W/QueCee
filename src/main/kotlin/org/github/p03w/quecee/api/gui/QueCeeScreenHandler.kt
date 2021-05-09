@@ -19,6 +19,7 @@ import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.util.collection.DefaultedList
 import org.github.p03w.quecee.api.gui.inventory.ItemActionMap
+import org.github.p03w.quecee.api.gui.inventory.SimpleDefaultedInventory
 
 /**
  * A custom screen handler for QueCee screens
@@ -32,7 +33,7 @@ import org.github.p03w.quecee.api.gui.inventory.ItemActionMap
 class QueCeeScreenHandler<T, in R : GenericContainerScreenHandler>(
     syncId: Int,
     private val playerInventory: PlayerInventory,
-    inv: Inventory,
+    inv: SimpleDefaultedInventory,
     rowCount: Int,
     handlerType: ScreenHandlerType<R>,
     var actions: ItemActionMap<T>,
@@ -48,6 +49,8 @@ class QueCeeScreenHandler<T, in R : GenericContainerScreenHandler>(
     ) {
 
     init {
+        inv.containingHandler = this
+
         addListener(object : ScreenHandlerListener {
             override fun onHandlerRegistered(handlerx: ScreenHandler, stacks: DefaultedList<ItemStack>) {
                 sendContentUpdates()
