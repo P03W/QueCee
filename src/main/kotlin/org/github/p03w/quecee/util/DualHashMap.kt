@@ -47,6 +47,16 @@ class DualHashMap<KEY, TYPE_A, TYPE_B> {
         }
     }
 
+    fun any(receiver: (KEY, TYPE_A, TYPE_B) -> Boolean): Boolean {
+        for (key in backingA.keys) {
+            val entry = get(key)
+            if (receiver(key, entry.first, entry.second)) {
+                return true
+            }
+        }
+        return false
+    }
+
     override fun toString(): String {
         return "DualHashMap(" +
                 "\n\tbackingA=$backingA" +
