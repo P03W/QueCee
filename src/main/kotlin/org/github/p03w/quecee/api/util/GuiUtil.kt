@@ -8,10 +8,10 @@ package org.github.p03w.quecee.api.util
 
 import net.minecraft.item.ItemConvertible
 import net.minecraft.item.ItemStack
-import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.IntArrayTag
-import net.minecraft.nbt.ListTag
-import net.minecraft.nbt.StringTag
+import net.minecraft.nbt.NbtCompound
+import net.minecraft.nbt.NbtIntArray
+import net.minecraft.nbt.NbtList
+import net.minecraft.nbt.NbtString
 import net.minecraft.text.LiteralText
 import net.minecraft.text.MutableText
 import net.minecraft.text.Style
@@ -45,11 +45,11 @@ fun ItemConvertible.guiStack(name: MutableText = LiteralText(""), nameColor: For
  * Automatically adds an extra line break at the beginning
  */
 fun ItemStack.withLore(loreLines: List<String>): ItemStack {
-    val display = (this.orCreateTag.get("display") as CompoundTag?) ?: CompoundTag()
-    display.put("Lore", ListTag().apply {
-        add(StringTag.of("{\"text\":\"\"}"))
+    val display = (this.orCreateTag.get("display") as NbtCompound?) ?: NbtCompound()
+    display.put("Lore", NbtList().apply {
+        add(NbtString.of("{\"text\":\"\"}"))
         for (line in loreLines) {
-            add(StringTag.of("{\"text\":\"$line\",\"color\":\"white\",\"italic\":false}"))
+            add(NbtString.of("{\"text\":\"$line\",\"color\":\"white\",\"italic\":false}"))
         }
     })
     this.orCreateTag.put("display", display)
@@ -61,8 +61,8 @@ fun ItemStack.withLore(loreLines: List<String>): ItemStack {
  */
 fun ItemStack.withGlint(doGlint: Boolean = true): ItemStack {
     if (doGlint) {
-        this.orCreateTag.put("Enchantments", ListTag().apply {
-            add(CompoundTag())
+        this.orCreateTag.put("Enchantments", NbtList().apply {
+            add(NbtCompound())
         })
     }
     return this
@@ -72,11 +72,11 @@ fun ItemStack.withGlint(doGlint: Boolean = true): ItemStack {
  * Applies the skull data to the ItemStack
  */
 fun ItemStack.applySkull(data: String, uuid: List<Int>): ItemStack {
-    orCreateTag.put("SkullOwner", CompoundTag().apply {
-        put("Id", IntArrayTag(uuid))
-        put("Properties", CompoundTag().apply {
-            put("textures", ListTag().apply {
-                add(CompoundTag().apply {
+    orCreateTag.put("SkullOwner", NbtCompound().apply {
+        put("Id", NbtIntArray(uuid))
+        put("Properties", NbtCompound().apply {
+            put("textures", NbtList().apply {
+                add(NbtCompound().apply {
                     putString("Value", data)
                 })
             })

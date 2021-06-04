@@ -10,6 +10,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.entity.player.PlayerInventory
 import net.minecraft.inventory.Inventory
 import net.minecraft.item.ItemStack
+import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket
 import net.minecraft.screen.GenericContainerScreenHandler
 import net.minecraft.screen.ScreenHandler
 import net.minecraft.screen.ScreenHandlerListener
@@ -17,7 +18,6 @@ import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
 import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.util.collection.DefaultedList
 import org.github.p03w.quecee.api.gui.inventory.ItemActionMap
 import org.github.p03w.quecee.api.gui.inventory.SimpleDefaultedInventory
 
@@ -52,10 +52,6 @@ class QueCeeScreenHandler<T, in R : GenericContainerScreenHandler>(
         inv.containingHandler = this
 
         addListener(object : ScreenHandlerListener {
-            override fun onHandlerRegistered(handlerx: ScreenHandler, stacks: DefaultedList<ItemStack>) {
-                sendContentUpdates()
-            }
-
             override fun onSlotUpdate(handlerx: ScreenHandler, slotId: Int, stack: ItemStack) {
                 sendContentUpdates()
             }
@@ -76,6 +72,8 @@ class QueCeeScreenHandler<T, in R : GenericContainerScreenHandler>(
         return false
     }
 
+    override fun setCursorStack(stack: ItemStack) {}
+
     override fun canInsertIntoSlot(stack: ItemStack?, slot: Slot?): Boolean {
         forceSync()
         return false
@@ -90,6 +88,16 @@ class QueCeeScreenHandler<T, in R : GenericContainerScreenHandler>(
         super.onContentChanged(inventory)
     }
 
+    override fun syncState() {
+        forceSync()
+        super.syncState()
+    }
+
+    override fun onButtonClick(player: PlayerEntity?, id: Int): Boolean {
+        forceSync()
+        return super.onButtonClick(player, id)
+    }
+
     override fun transferSlot(player: PlayerEntity, index: Int): ItemStack {
         forceSync()
         return ItemStack.EMPTY
@@ -99,18 +107,12 @@ class QueCeeScreenHandler<T, in R : GenericContainerScreenHandler>(
         forceSync()
     }
 
-    override fun isNotRestricted(player: PlayerEntity?): Boolean {
-        forceSync()
-        return true
-    }
-
-    override fun onSlotClick(slot: Int, data: Int, actionType: SlotActionType, playerEntity: PlayerEntity): ItemStack {
+    override fun onSlotClick(slot: Int, data: Int, actionType: SlotActionType, playerEntity: PlayerEntity) {
         if (actionType == SlotActionType.PICKUP) {
             actions.runActionAt(slot, data, state)
         }
 
         forceSync()
-        return ItemStack.EMPTY
     }
 
     override fun close(player: PlayerEntity) {
@@ -119,15 +121,20 @@ class QueCeeScreenHandler<T, in R : GenericContainerScreenHandler>(
     }
 
     private fun forceSync() {
-        sendContentUpdates()
-        playerInventory.cursorStack = ItemStack.EMPTY
-        playerInventory.updateItems()
-        playerInventory.player.playerScreenHandler.onContentChanged(playerInventory)
-        (playerInventory.player as ServerPlayerEntity).updateCursorStack()
         playerInventory.remove(
             { stack -> stack.orCreateTag.contains("DELETE") },
             Int.MAX_VALUE,
-            playerInventory.player.playerScreenHandler.method_29281()
+            playerInventory.player.playerScreenHandler.craftingInput
+        )
+        sendContentUpdates()
+        playerInventory.updateItems()
+        playerInventory.player.playerScreenHandler.onContentChanged(playerInventory)
+        (playerInventory.player as ServerPlayerEntity).networkHandler.sendPacket(
+            ScreenHandlerSlotUpdateS2CPacket(
+                -1,
+                -1,
+                ItemStack.EMPTY
+            )
         )
     }
 }
