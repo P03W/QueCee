@@ -19,7 +19,7 @@ object QueCeeMain : ModInitializer {
         player.inventory.remove(
             { stack -> stack.tag?.contains("QUECEE-DELETE") ?: false },
             Int.MAX_VALUE,
-            player.playerScreenHandler.method_29281()
+            player.playerScreenHandler.craftingInput
         )
     }
 }
