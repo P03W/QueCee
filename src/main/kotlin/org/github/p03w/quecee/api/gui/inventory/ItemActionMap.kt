@@ -14,6 +14,7 @@ import org.github.p03w.quecee.util.GuiAction
 /**
  * A simple wrapper that indexes `GuiAction`s and `ItemStack`s into slot numbers + some utility functions
  */
+@Suppress("unused")
 class ItemActionMap<T>(method: ItemActionMap<T>.() -> Unit) {
     private val backingMap: DualHashMap<Int, GuiAction<T>, ItemStack> = DualHashMap()
 

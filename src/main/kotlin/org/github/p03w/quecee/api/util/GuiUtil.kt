@@ -36,7 +36,7 @@ fun ItemConvertible.guiStack(name: MutableText = LiteralText(""), nameColor: For
                     .withFormatting(nameColor)
             )
         )
-        .apply { orCreateTag.putBoolean("QUECEE-DELETE", true) }
+        .apply { orCreateNbt.putBoolean("QUECEE-DELETE", true) }
 }
 
 /**
@@ -45,14 +45,14 @@ fun ItemConvertible.guiStack(name: MutableText = LiteralText(""), nameColor: For
  * Automatically adds an extra line break at the beginning
  */
 fun ItemStack.withLore(loreLines: List<String>): ItemStack {
-    val display = (this.orCreateTag.get("display") as NbtCompound?) ?: NbtCompound()
+    val display = (this.orCreateNbt.get("display") as NbtCompound?) ?: NbtCompound()
     display.put("Lore", NbtList().apply {
         add(NbtString.of("{\"text\":\"\"}"))
         for (line in loreLines) {
             add(NbtString.of("{\"text\":\"$line\",\"color\":\"white\",\"italic\":false}"))
         }
     })
-    this.orCreateTag.put("display", display)
+    this.orCreateNbt.put("display", display)
     return this
 }
 
@@ -61,7 +61,7 @@ fun ItemStack.withLore(loreLines: List<String>): ItemStack {
  */
 fun ItemStack.withGlint(doGlint: Boolean = true): ItemStack {
     if (doGlint) {
-        this.orCreateTag.put("Enchantments", NbtList().apply {
+        this.orCreateNbt.put("Enchantments", NbtList().apply {
             add(NbtCompound())
         })
     }
@@ -72,7 +72,7 @@ fun ItemStack.withGlint(doGlint: Boolean = true): ItemStack {
  * Applies the skull data to the ItemStack
  */
 fun ItemStack.applySkull(data: String, uuid: List<Int>): ItemStack {
-    orCreateTag.put("SkullOwner", NbtCompound().apply {
+    orCreateNbt.put("SkullOwner", NbtCompound().apply {
         put("Id", NbtIntArray(uuid))
         put("Properties", NbtCompound().apply {
             put("textures", NbtList().apply {
