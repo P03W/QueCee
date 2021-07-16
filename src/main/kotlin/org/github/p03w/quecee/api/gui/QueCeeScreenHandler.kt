@@ -79,7 +79,7 @@ class QueCeeScreenHandler<T, in R : GenericContainerScreenHandler>(
         return false
     }
 
-    override fun setStackInSlot(slot: Int, stack: ItemStack) {
+    override fun setStackInSlot(slot: Int, revision: Int, stack: ItemStack) {
         forceSync()
     }
 
@@ -103,7 +103,7 @@ class QueCeeScreenHandler<T, in R : GenericContainerScreenHandler>(
         return ItemStack.EMPTY
     }
 
-    override fun updateSlotStacks(stacks: MutableList<ItemStack>) {
+    override fun updateSlotStacks(revision: Int, stacks: MutableList<ItemStack>, cursorStack: ItemStack) {
         forceSync()
     }
 
@@ -122,7 +122,7 @@ class QueCeeScreenHandler<T, in R : GenericContainerScreenHandler>(
 
     private fun forceSync() {
         playerInventory.remove(
-            { stack -> stack.orCreateTag.contains("DELETE") },
+            { stack -> stack.orCreateNbt.contains("DELETE") },
             Int.MAX_VALUE,
             playerInventory.player.playerScreenHandler.craftingInput
         )
@@ -133,6 +133,7 @@ class QueCeeScreenHandler<T, in R : GenericContainerScreenHandler>(
             ScreenHandlerSlotUpdateS2CPacket(
                 -1,
                 -1,
+                nextRevision(),
                 ItemStack.EMPTY
             )
         )

@@ -17,7 +17,7 @@ object QueCeeMain : ModInitializer {
 
     private fun stripPlayerOfGuiItems(player: ServerPlayerEntity) {
         player.inventory.remove(
-            { stack -> stack.tag?.contains("QUECEE-DELETE") ?: false },
+            { stack -> stack.nbt?.contains("QUECEE-DELETE") ?: false },
             Int.MAX_VALUE,
             player.playerScreenHandler.craftingInput
         )

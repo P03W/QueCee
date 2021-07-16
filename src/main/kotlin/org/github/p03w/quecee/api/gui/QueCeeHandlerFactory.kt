@@ -11,6 +11,7 @@ import org.github.p03w.quecee.api.gui.inventory.ItemActionMap
 import org.github.p03w.quecee.api.gui.inventory.SimpleDefaultedInventory
 import org.github.p03w.quecee.api.util.guiStack
 
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 abstract class QueCeeHandlerFactory<T>(
     val screenDisplayName: Text,
     val rowCount: Int,
@@ -31,6 +32,7 @@ abstract class QueCeeHandlerFactory<T>(
 
         lastMade =
             QueCeeScreenHandler(syncId, inv, defaulted, rowCount, rowsToType(rowCount), actionMap, state, onCloseMethod)
+        @Suppress("UNCHECKED_CAST")
         return lastMade as QueCeeScreenHandler<T, GenericContainerScreenHandler>
     }
 
